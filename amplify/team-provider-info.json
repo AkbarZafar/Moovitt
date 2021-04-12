@@ -10,6 +10,12 @@
       "StackName": "amplify-moovitt-dev-235858",
       "StackId": "arn:aws:cloudformation:us-east-1:097277689754:stack/amplify-moovitt-dev-235858/1650a1d0-94fa-11eb-9855-0e194195a24f",
       "AmplifyAppId": "d2k25yj4m7sobo"
+    },
+    "categories": {
+      "auth": {
+        "moovittfec2643c": {},
+        "moovitt": {}
+      }
     }
   }
 }

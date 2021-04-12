@@ -1,0 +1,6 @@
+type Box @model @auth(rules: [{allow: private}]) {
+  name: String!
+  location: String!
+  items: [String!]
+}
+ 

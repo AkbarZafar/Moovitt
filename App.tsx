@@ -1,21 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import Amplify, { Auth } from 'aws-amplify';
+import { useEffect, useState } from 'react';
+import awsconfig from './aws-exports';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
+import { Authentication } from './components/Authentication/Authentication';
+import { Button, KeyboardAvoidingView, Text } from 'react-native';
 
-export default function App() {
+
+//TODO remove for mobile testing 
+awsconfig.oauth.redirectSignIn = "http://localhost:19006/"
+awsconfig.oauth.redirectSignOut = "http://localhost:19006/"
+
+Amplify.configure(awsconfig);
+
+
+const App: React.FC = () => {
+  const [user, setUser] = useState<any>(undefined);
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(user => setUser(user))
+      .catch(() => console.log("Not signed in"));
+    console.log(user);
+  }, [user]);
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    <KeyboardAvoidingView>
+      {!user && <Authentication />}
+      <Text>{user?.attributes.email}</Text>
+      <Button title='Sign out' onPress={() => Auth.signOut()} />
+    </KeyboardAvoidingView>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
