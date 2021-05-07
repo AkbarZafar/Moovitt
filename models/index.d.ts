@@ -9,6 +9,7 @@ export declare class Box {
   readonly name: string;
   readonly location: string;
   readonly items?: string[];
+  readonly _version?: number | undefined;
   constructor(init: ModelInit<Box>);
   static copyOf(source: Box, mutator: (draft: MutableModel<Box>) => MutableModel<Box> | void): Box;
 }

@@ -14,7 +14,7 @@ import { registerRootComponent } from "expo";
 
 export type RootStackParamList = {
   Home: undefined;
-  BoxInterface: { boxId: string | undefined };
+  BoxInterface: { boxId: string | undefined, version: number | undefined };
   Authentication: undefined;
 };
 

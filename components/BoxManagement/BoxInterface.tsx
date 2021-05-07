@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, version } from "react";
 import {
   View,
   Text,
@@ -34,7 +34,7 @@ export const BoxInterface = ({route, navigation}: Props) => {
   const [boxLocation, setBoxLocation] = useState('')
   const [itemList, setItemList] = useState<(string)[]>([])
 
-  const { boxId } = route.params
+  const { boxId, version } = route.params
 
   useEffect(() => {
     if (boxId) {
@@ -91,7 +91,8 @@ export const BoxInterface = ({route, navigation}: Props) => {
         location: boxLocation,
         items: itemList.filter( (element) => {
           return element != null && element != ''
-        } )
+        } ),
+        _version: version!
       };
 
       const updatedBox = await API.graphql(
@@ -135,7 +136,6 @@ export const BoxInterface = ({route, navigation}: Props) => {
         placeholder="Location"
       />
       <Text>Items</Text>
-      {console.log(itemList)}
       {itemList.map((name, index) => <TextInput
                     onChangeText={(val) => updateItem( val, index)}
                     style={styles.input}

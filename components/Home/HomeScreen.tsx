@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, version } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import { GraphQLResult } from "@aws-amplify/api";
 import { useIsFocused } from "@react-navigation/native";
 import * as APIt from '../../src/API'
 import { Box } from "../../models";
+import * as mutations from "../../src/graphql/mutations";
+
 
 type HomeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -27,7 +29,7 @@ type Props = {
 };
 
 export const HomeScreen = ({navigation}: Props) => {
-  const [BoxList, setBoxList] = useState<Box[] | undefined>([])
+  const [boxList, setBoxList] = useState<Box[] | undefined>([])
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -52,7 +54,8 @@ export const HomeScreen = ({navigation}: Props) => {
             id: element!.id,
             location: element!.location,
             name: element!.name,
-            items: element!.items!
+            items: element!.items!,
+            _version: element!._version!
           })
         });
         return boxList
@@ -62,10 +65,33 @@ export const HomeScreen = ({navigation}: Props) => {
       console.log("error retrieving boxes:", err);
     }
   }
+  
+  const deleteBox = async (index: number) => {
+    try {
+
+      const boxId = boxList![index].id
+      const version = boxList![index]._version
+
+      const box: APIt.DeleteBoxInput = {
+        id: boxId,
+        _version: version
+      }
+      const deletedBox = await API.graphql(
+        graphqlOperation(mutations.deleteBox, { input: box })
+      );
+      if (deletedBox) {
+        let boxArray: Box[]= [...boxList!]
+        boxArray.splice(index,1)
+        setBoxList(boxArray)
+      }
+    } catch (err) {
+      console.log("error deleting box:", err);
+    }
+  }
 
   const renderBoxList = () => {
     let boxObjectList: JSX.Element[] = [] 
-    BoxList?.map( (x,index) => {
+    boxList?.map( (x,index) => {
       boxObjectList.push(
       <View key={index}  style={styles.boxHolder}>
         <Text>
@@ -76,7 +102,11 @@ export const HomeScreen = ({navigation}: Props) => {
         </Text>
         <Button
           title="Edit Box"
-          onPress={() => navigation.navigate('BoxInterface', {boxId: x.id})}
+          onPress={() => navigation.navigate('BoxInterface', {boxId: x.id, version: x._version})}
+        />
+        <Button 
+          title="Delete Box"
+          onPress={() => deleteBox(index)}
         />
       </View>
 )
@@ -92,7 +122,7 @@ export const HomeScreen = ({navigation}: Props) => {
       <Text>HomeScreen</Text>
       <Button
         title="NewBox"
-        onPress={() => navigation.navigate('BoxInterface', {boxId: undefined})}
+        onPress={() => navigation.navigate('BoxInterface', {boxId: undefined, version: undefined})}
       />
       {renderBoxList()}
       <Button title="Sign out" onPress={() => Auth.signOut()} />

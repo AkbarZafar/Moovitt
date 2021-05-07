@@ -10,7 +10,6 @@ export const SignUp: React.FC<IShowAuthPage> = ({ showPage }) => {
     useEffect(() => {
         Hub.listen('auth', (data) => {
             const { payload } = data;
-            console.log(data);
         })
     })
 
@@ -44,7 +43,6 @@ export const ConfirmSignUp: React.FC<IShowAuthPage> = ({ showPage }) => {
     useEffect(() => {
         Hub.listen('auth', (data) => {
             const { payload } = data;
-            console.log(data);
         })
     })
 

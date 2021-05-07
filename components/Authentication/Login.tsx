@@ -11,7 +11,6 @@ export const Login: React.FC<IShowAuthPage> = ({ showPage }) => {
     useEffect(() => {
         Hub.listen('auth', (data) => {
             const { payload } = data;
-            console.log(data);
         })
     })
 
