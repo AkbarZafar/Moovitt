@@ -59,7 +59,7 @@ export const ConfirmSignUp: React.FC<IShowAuthPage> = ({ showPage }) => {
 
             <Button
                 title="Sign in instead"
-                onPress={() => showPage(AuthPage.SignUp)}
+                onPress={() => showPage(AuthPage.Login)}
             />
         </SafeAreaView>
 

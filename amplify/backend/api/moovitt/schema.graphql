@@ -1,4 +1,4 @@
-type Box @model @auth(rules: [{allow: private}]) {
+type Box @model @auth(rules: [{allow: owner, operations: [read, update, delete, create]}]) {
   name: String!
   location: String!
   items: [String!]
