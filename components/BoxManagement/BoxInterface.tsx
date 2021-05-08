@@ -33,16 +33,13 @@ export const BoxInterface = ({route, navigation}: Props) => {
   const [boxName, setboxName] = useState('')
   const [boxLocation, setBoxLocation] = useState('')
   const [itemList, setItemList] = useState<(string)[]>([])
+  const [boxVersion, setBoxVersion] = useState<number>()
 
-  const { boxId, version } = route.params
+  const { boxId } = route.params
 
   useEffect(() => {
     if (boxId) {
-      fetchBoxData().then(data => {
-        setboxName(data!.name)
-        setBoxLocation(data!.location)
-        setItemList(data?.items!);
-      });
+      fetchBoxData()
     }    
   }, [boxId])
 
@@ -53,9 +50,12 @@ export const BoxInterface = ({route, navigation}: Props) => {
         graphqlOperation(queries.getBox, boxQV)
       ) as GraphQLResult<APIt.GetBoxQuery>
 
-      if (boxGQL.data) {
+      if (boxGQL.data?.getBox) {
         const box = boxGQL.data.getBox;
-        return box
+        setboxName(box.name)
+        setBoxLocation(box.location)
+        setItemList(box.items!)
+        setBoxVersion(box._version)
       }
       
     } catch (err) {
@@ -65,7 +65,9 @@ export const BoxInterface = ({route, navigation}: Props) => {
 
   const addbox = async () => {
     try {
+      console.log(boxId)
       const box: APIt.CreateBoxInput = {
+        id: boxId,
         name: boxName,
         location: boxLocation,
         items: itemList.filter( (element) => {
@@ -76,7 +78,7 @@ export const BoxInterface = ({route, navigation}: Props) => {
         graphqlOperation(mutations.createBox, { input: box })
       );
       if (newBox !== undefined) {
-        navigation.goBack()
+        navigation.popToTop()
       }
     } catch (err) {
       console.log("error creating box:", err);
@@ -92,14 +94,14 @@ export const BoxInterface = ({route, navigation}: Props) => {
         items: itemList.filter( (element) => {
           return element != null && element != ''
         } ),
-        _version: version!
+        _version: boxVersion
       };
 
       const updatedBox = await API.graphql(
         graphqlOperation(mutations.updateBox, { input: box, id: boxId })
       );
       if (updatedBox !== undefined) {
-        navigation.goBack()
+        navigation.popToTop()
       }
     } catch (err) {
       console.log("error updating box:", err);
@@ -114,7 +116,7 @@ export const BoxInterface = ({route, navigation}: Props) => {
   }
 
   const upsertBox = () => {
-    if(boxId) {
+    if(boxId && boxVersion) {
       return <Button title="Update box" onPress={updateBox} />
     } else {
       return <Button title="Create box" onPress={addbox} />
@@ -146,7 +148,7 @@ export const BoxInterface = ({route, navigation}: Props) => {
       
       <Button title="Create item" onPress={ () => {setItemList([...itemList, ''])}} />
       {upsertBox()}
-      
+      <Button title="Home" onPress={navigation.popToTop}/>
     </View>
   );
 };

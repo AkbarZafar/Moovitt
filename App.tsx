@@ -9,48 +9,25 @@ import { Button, KeyboardAvoidingView, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen } from "./components/Home/HomeScreen";
+import { QRScanner } from "./components/QRScanner/QRScanner";
 import { StackNavigationProp } from '@react-navigation/stack';
-import { registerRootComponent } from "expo";
 
 export type RootStackParamList = {
   Home: undefined;
-  BoxInterface: { boxId: string | undefined, version: number | undefined };
+  BoxInterface: { boxId: string | undefined };
   Authentication: undefined;
-};
-
-type ProfileScreenNavigationProp = StackNavigationProp<
-  RootStackParamList
->;
-
-type Props = {
-  navigation: ProfileScreenNavigationProp;
+  QRScanner: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 //TODO remove for mobile testing
-awsconfig.oauth.redirectSignIn = "http://localhost:19006/";
-awsconfig.oauth.redirectSignOut = "http://localhost:19006/";
+// awsconfig.oauth.redirectSignIn = "http://localhost:19006/";
+// awsconfig.oauth.redirectSignOut = "http://localhost:19006/";
 
 Amplify.configure(awsconfig);
 
 const App: React.FC = () => {
-
-  const MyStack = () => {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="BoxInterface"
-            component={BoxInterface}
-            options={{ title: 'Welcome' }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  };
-
-
   const [user, setUser] = useState<any>(undefined);
   useEffect(() => {
     Auth.currentAuthenticatedUser()
@@ -73,6 +50,10 @@ const App: React.FC = () => {
         <Stack.Screen
             name="BoxInterface"
             component={BoxInterface}
+        />
+        <Stack.Screen
+          name="QRScanner"
+          component={QRScanner}
         />
       </Stack.Navigator>
       

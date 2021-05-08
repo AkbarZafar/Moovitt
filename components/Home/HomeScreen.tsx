@@ -1,4 +1,4 @@
-import React, { useEffect, useState, version } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -102,7 +102,7 @@ export const HomeScreen = ({navigation}: Props) => {
         </Text>
         <Button
           title="Edit Box"
-          onPress={() => navigation.navigate('BoxInterface', {boxId: x.id, version: x._version})}
+          onPress={() => navigation.navigate('BoxInterface', {boxId: x.id})}
         />
         <Button 
           title="Delete Box"
@@ -122,7 +122,11 @@ export const HomeScreen = ({navigation}: Props) => {
       <Text>HomeScreen</Text>
       <Button
         title="NewBox"
-        onPress={() => navigation.navigate('BoxInterface', {boxId: undefined, version: undefined})}
+        onPress={() => navigation.navigate('BoxInterface', {boxId: undefined})}
+      />
+      <Button
+        title="Scan QR Code"
+        onPress={() => navigation.navigate('QRScanner')}
       />
       {renderBoxList()}
       <Button title="Sign out" onPress={() => Auth.signOut()} />
